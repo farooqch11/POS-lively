@@ -25,6 +25,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   var actions = AppBridge.actions;
   var TitleBar = actions.TitleBar;
+  var Cart = actions.Cart;
+  var Group = actions.Group;
   TitleBar.create(app, {
     title: data.page,
   });
@@ -59,6 +61,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
     if (shouldRedirect) Turbolinks.visit(data.loadPath);
   }
+
+  var discountPayload = {
+    amount: 1,
+    discountDescription: "$1 off discount",
+    type: 'flat',
+  }
+  var cart = Cart.create(app);
+  cart.subscribe(Cart.Action.UPDATE, function (payload) {
+    console.log('[Client] cart update', payload);
+  });
+  cart.dispatch(Cart.Action.SET_DISCOUNT, {
+    data: discountPayload
+  });
+  // app.featuresAvailable(Group.Cart).then(function (state) {
+  //   var _ref = state.Cart && state.Cart[Cart.Action.FETCH],
+  //       Dispatch = _ref.Dispatch;
+  //
+  //   if (Dispatch) {
+  //     cart.dispatch(Cart.Action.FETCH);
+  //   } else {
+  //     var toastOptions = {
+  //       message: 'Cart is not available',
+  //       duration: 5000,
+  //       isError: true
+  //     };
+  //     var toastError = Toast.create(app, toastOptions);
+  //     toastError.dispatch(Toast.Action.SHOW);
+  //   }
+  // });
+
 
   async function retrieveToken(app) {
     window.sessionToken = await getSessionToken(app);
